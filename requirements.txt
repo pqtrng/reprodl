@@ -7,3 +7,5 @@ torch
 torchvision 
 torchaudio
 pytorch-lightning
+black
+tabulate

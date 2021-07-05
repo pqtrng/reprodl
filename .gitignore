@@ -125,3 +125,4 @@ dmypy.json
 *.zip
 data/
 .vscode/
+lightning_logs/

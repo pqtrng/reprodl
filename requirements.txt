@@ -1,0 +1,12 @@
+notebook
+matplotlib
+pandas
+ipywidgets
+pathlib
+torch 
+torchvision 
+torchaudio
+pytorch-lightning
+black
+tabulate
+torch-tb-profiler

@@ -9,3 +9,4 @@ torchaudio
 pytorch-lightning
 black
 tabulate
+torch-tb-profiler

@@ -7,11 +7,7 @@ from pathlib import Path
 import pandas as pd
 
 torch.cuda.is_available()
-
-datapath = Path("data/ESC-50")
-datapath.exists()
-csv = pd.read_csv(datapath / Path("meta/esc50.csv"))
-csv.head()
+pl.seed_everything()
 
 
 class ESC50Dataset(torch.utils.data.Dataset):
@@ -51,19 +47,6 @@ class ESC50Dataset(torch.utils.data.Dataset):
             int: Number of samples
         """
         return len(self.csv)
-
-
-train_data = ESC50Dataset(folds=[1, 2, 3])
-val_data = ESC50Dataset(folds=[4])
-test_data = ESC50Dataset(folds=[5])
-
-train_loader = torch.utils.data.DataLoader(
-    dataset=train_data, num_workers=20, batch_size=8, shuffle=True
-)
-val_loader = torch.utils.data.DataLoader(dataset=val_data, num_workers=20, batch_size=8)
-test_loader = torch.utils.data.DataLoader(
-    dataset=test_data, num_workers=20, batch_size=8
-)
 
 
 class AudioNet(pl.LightningModule):
@@ -148,7 +131,22 @@ class AudioNet(pl.LightningModule):
 
 
 def train():
+
+    train_loader = torch.utils.data.DataLoader(
+        dataset=ESC50Dataset(folds=[1, 2, 3]),
+        num_workers=20,
+        batch_size=8,
+        shuffle=True,
+    )
+    val_loader = torch.utils.data.DataLoader(
+        dataset=ESC50Dataset(folds=[4]), num_workers=20, batch_size=8
+    )
+    test_loader = torch.utils.data.DataLoader(
+        dataset=ESC50Dataset(folds=[5]), num_workers=20, batch_size=8
+    )
+
     audio_net = AudioNet()
+
     trainer = pl.Trainer(gpus=1, max_epochs=25)
     trainer.fit(
         model=audio_net, train_dataloader=train_loader, val_dataloaders=val_loader
@@ -157,5 +155,4 @@ def train():
 
 
 if __name__ == "__main__":
-    pl.seed_everything()
     train()

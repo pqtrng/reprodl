@@ -19,3 +19,9 @@ pip install -r requirements.txt
 - Download dataset [ESC-50](https://github.com/karolpiczak/ESC-50)
 
 - Extract zip file to **data** folder
+
+- Train model
+
+```bash
+python train.py
+```

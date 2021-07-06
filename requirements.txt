@@ -10,3 +10,5 @@ pytorch-lightning
 black
 tabulate
 torch-tb-profiler
+hydra-core
+hydra_colorlog

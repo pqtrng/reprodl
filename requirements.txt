@@ -12,5 +12,5 @@ tabulate
 torch-tb-profiler
 hydra-core
 hydra_colorlog
-dvc
+dvc[all]
 boto3

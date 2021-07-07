@@ -25,3 +25,35 @@ pip install -r requirements.txt
 ```bash
 python train.py
 ```
+
+- Without GPU
+
+```bash
+python train.py ~trainer.gpus
+```
+
+- If you want to use Docker then:
+
+1. Build
+
+```bash
+docker build . -t reprodl --rm
+```
+
+2. Run
+
+```bash
+docker run --name "reprodl" -it reprodl
+```
+
+3. Train:
+
+```bash
+python train.py 
+```
+
+- Without GPU
+
+```bash
+python train.py ~trainer.gpus
+```

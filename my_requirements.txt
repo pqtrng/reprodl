@@ -1,0 +1,17 @@
+notebook
+matplotlib
+pandas
+ipywidgets
+pathlib
+torch 
+torchvision 
+torchaudio
+pytorch-lightning
+black
+tabulate
+torch-tb-profiler
+hydra-core
+hydra_colorlog
+dvc[all]
+boto3
+pipreqs

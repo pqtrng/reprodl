@@ -127,3 +127,4 @@ dmypy.json
 lightning_logs/*
 outputs/*
 data/ESC-50/*
+wandb/*

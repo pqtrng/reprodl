@@ -8,8 +8,11 @@ import pandas as pd
 import hydra
 from omegaconf import DictConfig, OmegaConf
 import logging
+import wandb
+
 
 logger = logging.getLogger(__name__)
+wandb.init(project="reprodl")
 
 
 class ESC50Dataset(torch.utils.data.Dataset):
@@ -165,10 +168,12 @@ def train(cfg: DictConfig):
 
     audio_net = AudioNet(hparams=cfg.model)
 
-    trainer = pl.Trainer(**cfg.trainer)
+    trainer = pl.Trainer(**cfg.trainer, logger=pl.loggers.WandbLogger())
+
     trainer.fit(
         model=audio_net, train_dataloader=train_loader, val_dataloaders=val_loader
     )
+
     # trainer.test(model=audio_net, test_dataloaders=test_loader)
 
 

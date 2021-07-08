@@ -1,9 +1,12 @@
+import hydra
 import pytorch_lightning as pl
-import torch, hydra
+import torch
+
 from net import AudioNet
 
 
-def testAudioNet():
+def test_audio_net():
+    """Function to test AudioNet"""
     with hydra.initialize(config_path="configs"):
         cfg = hydra.compose(
             config_name="default.yaml",

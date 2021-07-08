@@ -1,10 +1,13 @@
-import torch
-import pytorch_lightning as pl
-from pathlib import Path
-import hydra
-from omegaconf import DictConfig, OmegaConf
 import logging
+from pathlib import Path
+
+import hydra
+import pytorch_lightning as pl
+import torch
 import wandb
+from omegaconf import DictConfig
+from omegaconf import OmegaConf
+
 from data import ESC50Dataset
 from net import AudioNet
 
@@ -14,7 +17,11 @@ logger = logging.getLogger(__name__)
 
 @hydra.main(config_path="configs", config_name="default")
 def train(cfg: DictConfig):
+    """Train AudioNet on ESC50 dataset
 
+    Args:
+        cfg (DictConfig): Training cofiguration
+    """
     config = {
         "sample_rate": cfg.data.sample_rate,
         "batch_size": cfg.data.batch_size,

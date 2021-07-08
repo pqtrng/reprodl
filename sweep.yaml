@@ -4,11 +4,11 @@ metric:
   name: val_acc
   goal: maximize
 parameters:
-  sample_rate: 
+  sample_rate:
     values: [2000, 4000, 8000]
-  batch_size : 
+  batch_size :
     values: [8, 16, 32, 64]
-  base_filters: 
+  base_filters:
     min: 16
     max: 64
   lr:

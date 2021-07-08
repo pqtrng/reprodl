@@ -17,13 +17,17 @@ pipreqs
 pre-commit
 pylint
 python-crontab
+python-crontab
 pytorch-lightning
 PyYAML
 PyYAML
 reorder-python-imports
+SoundFile
 tabulate
 torch
+torch-model-archiver
 torch-tb-profiler
 torchaudio
+torchserve
 torchvision
 wandb

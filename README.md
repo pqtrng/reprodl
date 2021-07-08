@@ -19,6 +19,12 @@ pip install -r requirements.txt
 - Download dataset [ESC-50](https://github.com/karolpiczak/ESC-50)
 
 - Extract zip file to **data** folder
+- Run wandb
+
+```bash
+docker pull wandb/local
+wandb local
+```
 
 - Pull **Weights and Biases** image
 

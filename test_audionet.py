@@ -7,7 +7,7 @@ def testAudioNet():
     with hydra.initialize(config_path="configs"):
         cfg = hydra.compose(
             config_name="default.yaml",
-            overrides=["trainer.max_epochs=50", "trainer.gpus=0"],
+            overrides=["trainer.max_epochs=250", "trainer.gpus=0"],
         )
 
         pl.seed_everything(seed=cfg.seed)

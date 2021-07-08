@@ -8,6 +8,8 @@ import pandas as pd
 import hydra
 from omegaconf import DictConfig, OmegaConf
 import logging
+import wandb
+
 
 logger = logging.getLogger(__name__)
 
@@ -142,8 +144,26 @@ class AudioNet(pl.LightningModule):
 
 @hydra.main(config_path="configs", config_name="default")
 def train(cfg: DictConfig):
+
+    config = {
+        "sample_rate": cfg.data.sample_rate,
+        "batch_size": cfg.data.batch_size,
+        "lr": cfg.model.optimizer.lr,
+        "base_filters": cfg.model.base_filters,
+    }
+
+    wandb.init(project="reprodl", config=config)
+
+    cfg.data.sample_rate = wandb.config.sample_rate
+    cfg.data.batch_size = wandb.config.batch_size
+    cfg.model.optimizer.lr = wandb.config.lr
+    cfg.model.base_filters = wandb.config.base_filters
+
     logger.info(OmegaConf.to_yaml(cfg=cfg))
+
     data_path = Path(hydra.utils.get_original_cwd()) / Path(cfg.data.path)
+
+    # Load data
     train_loader = torch.utils.data.DataLoader(
         dataset=ESC50Dataset(path=data_path, folds=cfg.data.train_folds),
         num_workers=cfg.data.workers,
@@ -165,11 +185,11 @@ def train(cfg: DictConfig):
 
     audio_net = AudioNet(hparams=cfg.model)
 
-    trainer = pl.Trainer(**cfg.trainer)
+    trainer = pl.Trainer(**cfg.trainer, logger=pl.loggers.WandbLogger())
+
     trainer.fit(
         model=audio_net, train_dataloader=train_loader, val_dataloaders=val_loader
     )
-    # trainer.test(model=audio_net, test_dataloaders=test_loader)
 
 
 if __name__ == "__main__":

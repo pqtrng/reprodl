@@ -26,12 +26,11 @@ endif
 requirements: test_environment
 	$(info Install supporting library!)
 	$(PYTHON_INTERPRETER) -m pip install -U pip setuptools wheel
-	$(PYTHON_INTERPRETER) -m pip install -r requirements.txt #--upgrade
+	$(PYTHON_INTERPRETER) -m pip install -r requirements.txt --upgrade
 
 
 data: clean
 	$(info Download zip file of datasets!)
-	# $(PYTHON_INTERPRETER) src/data/download.py $(DATA_URL) data/interim/original.zip
 
 
 ## Delete all compiled Python files
@@ -46,7 +45,7 @@ clean: lint
 ## Lint using black 
 lint:
 	$(info format codes)
-	black src
+	black .
 
 
 ## Set up python interpreter environment

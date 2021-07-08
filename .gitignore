@@ -123,6 +123,8 @@ dmypy.json
 # Pyre type checker
 .pyre/
 *.zip
-data/
-.vscode/
-lightning_logs/
+.vscode/*
+lightning_logs/*
+outputs/*
+data/ESC-50/*
+wandb/*

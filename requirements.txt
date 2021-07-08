@@ -10,3 +10,10 @@ pytorch-lightning
 black
 tabulate
 torch-tb-profiler
+hydra-core
+hydra_colorlog
+dvc[all]
+boto3
+pipreqs
+wandb
+nose

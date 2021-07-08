@@ -1,6 +1,8 @@
 from pathlib import Path
-import torch, torchaudio
+
 import pandas as pd
+import torch
+import torchaudio
 
 
 class ESC50Dataset(torch.utils.data.Dataset):

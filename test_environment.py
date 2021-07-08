@@ -4,6 +4,13 @@ REQUIRED_PYTHON = "python3"
 
 
 def main():
+    """Testing environment
+
+    Raises:
+        ValueError  :   When can't recognized interpreter
+        TypeError   :   Wrong Python version
+    """
+
     system_major = sys.version_info.major
     if REQUIRED_PYTHON == "python":
         required_major = 2
@@ -18,8 +25,8 @@ def main():
                 required_major, sys.version
             )
         )
-    else:
-        print(">>> Development environment passes all tests!")
+
+    print(">>> Development environment passes all tests!")
 
 
 if __name__ == "__main__":

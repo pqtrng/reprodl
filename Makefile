@@ -1,4 +1,4 @@
-.PHONY: clean data lint requirements train test view all
+
 
 #################################################################################
 # GLOBALS                                                                       #
@@ -21,40 +21,47 @@ endif
 # COMMANDS                                                                      #
 #################################################################################
 
-
+.PHONY: requirements
 ## Install Python Dependencies
 requirements: test_environment
 	$(info Install supporting library!)
 	$(PYTHON_INTERPRETER) -m pip install -U pip setuptools wheel
 	$(PYTHON_INTERPRETER) -m pip install -r requirements.txt --upgrade
 
-
-data: clean
+.PHONY: data
+data:
 	$(info Download zip file of datasets!)
 
+.PHONY: lint
+lint:
+	$(info format codes)
+	pylint .
+	black .
 
-## Delete all compiled Python files
-clean: lint
+.PHONY: precomit
+check: lint
+	pre-commit run --all-files
+
+.PHONY: test
+test: check
+	$(info Testing)
+	nosetests
+
+.PHONY: clean
+clean: test
 	$(info Clean project)
 	find . -type f -name "*.pyc" -delete
 	find . -type d -name "__pycache__" -delete
 	find . -type d -name "__MACOSX" -exec rm -rf {} +
 	find . -type f -name "*.zip" -delete
 
-
-## Lint using black 
-lint:
-	$(info format codes)
-	black .
-
-
-## Set up python interpreter environment
+.PHONY: create_environment
 create_environment:
 ifeq (True,$(HAS_CONDA))
 		@echo ">>> Detected conda, creating conda environment."
 ifeq (3,$(findstring 3,$(PYTHON_INTERPRETER)))
 	conda env remove --name $(PROJECT_NAME)
-	conda create --name $(PROJECT_NAME) python=3.8 -y
+	conda create --name $(PROJECT_NAME) python=3 -y
 else
 	conda create --name $(PROJECT_NAME) python=2.7
 endif
@@ -68,7 +75,7 @@ else
 endif
 
 
-## Test python environment is setup correctly
+.PHONY: test_environment
 test_environment:
 	$(info Check python version!)
 	$(PYTHON_INTERPRETER) test_environment.py

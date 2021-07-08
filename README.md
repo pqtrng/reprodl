@@ -34,26 +34,26 @@ python train.py ~trainer.gpus
 
 - If you want to use Docker then:
 
-1. Build
+- For training with GPU, change this line in Dockerfile:
+
+```Docker
+CMD ["python", "train.py"]
+```
+
+- Without GPU
+
+```Docker
+CMD ["python", "train.py", "~trainer.gpus"]
+```
+
+- Build
 
 ```bash
 docker build . -t reprodl --rm
 ```
 
-2. Run
+- Run
 
 ```bash
-docker run --name "reprodl" -it reprodl
-```
-
-3. Train:
-
-```bash
-python train.py 
-```
-
-- Without GPU
-
-```bash
-python train.py ~trainer.gpus
+docker run --name "reprodl" reprodl
 ```

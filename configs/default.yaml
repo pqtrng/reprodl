@@ -22,7 +22,6 @@ trainer:
   # All parameters to be passed at the Trainer object
   gpus : 1
   max_epochs : 25
-  fast_dev_run : False
 
 defaults:
   - override hydra/job_logging: colorlog

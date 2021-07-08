@@ -16,3 +16,4 @@ dvc[all]
 boto3
 pipreqs
 wandb
+nose

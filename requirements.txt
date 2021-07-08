@@ -17,3 +17,7 @@ boto3
 pipreqs
 wandb
 nose
+torchserve
+torch-model-archiver
+SoundFile
+python-crontab

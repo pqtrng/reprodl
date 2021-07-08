@@ -8,14 +8,25 @@ import wandb
 from data import ESC50Dataset
 from net import AudioNet
 
-
 logger = logging.getLogger(__name__)
 
 
 @hydra.main(config_path="configs", config_name="default")
-def train(cfg: DictConfig):
+def tune(cfg: DictConfig):
 
-    wandb.init(project="reprodl")
+    config = {
+        "sample_rate": cfg.data.sample_rate,
+        "batch_size": cfg.data.batch_size,
+        "lr": cfg.model.optimizer.lr,
+        "base_filters": cfg.model.base_filters,
+    }
+
+    wandb.init(project="reprodl", config=config)
+
+    cfg.data.sample_rate = wandb.config.sample_rate
+    cfg.data.batch_size = wandb.config.batch_size
+    cfg.model.optimizer.lr = wandb.config.lr
+    cfg.model.base_filters = wandb.config.base_filters
 
     logger.info(OmegaConf.to_yaml(cfg=cfg))
 
@@ -51,8 +62,6 @@ def train(cfg: DictConfig):
         model=audio_net, train_dataloader=train_loader, val_dataloaders=val_loader
     )
 
-    torch.save(trainer.model.state_dict(), "model.pth")
-
 
 if __name__ == "__main__":
-    train()
+    tune()

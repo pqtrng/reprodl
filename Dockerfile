@@ -17,4 +17,5 @@ FROM env
 COPY . ./
 
 # Run the training loop
-CMD ["python", "train.py", "~trainer.gpus"]
+# CMD ["python", "train.py", "~trainer.gpus"]
+CMD ["python", "train.py"]

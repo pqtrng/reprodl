@@ -1,5 +1,3 @@
-
-
 #################################################################################
 # GLOBALS                                                                       #
 #################################################################################
@@ -21,6 +19,8 @@ endif
 # COMMANDS                                                                      #
 #################################################################################
 
+
+
 .PHONY: requirements
 ## Install Python Dependencies
 requirements: test_environment
@@ -28,18 +28,20 @@ requirements: test_environment
 	$(PYTHON_INTERPRETER) -m pip install -U pip setuptools wheel
 	$(PYTHON_INTERPRETER) -m pip install -r requirements.txt --upgrade
 
-.PHONY: data
-data:
-	$(info Download zip file of datasets!)
-
 .PHONY: lint
-lint:
+lint: requirements
 	$(info format codes)
 	autoflake --in-place --remove-unused-variables --remove-all-unused-imports --remove-duplicate-keys *.py
 	black .
 
+.PHONY: githook
+githook: lint
+	$(info Set up pre commit hook)
+	rm .git/hooks/*
+	pre-commit install
+
 .PHONY: precomit
-check: lint
+check: githook
 	pre-commit run --all-files
 
 .PHONY: test
@@ -54,6 +56,10 @@ clean: test
 	find . -type d -name "__pycache__" -delete
 	find . -type d -name "__MACOSX" -exec rm -rf {} +
 	find . -type f -name "*.zip" -delete
+
+.PHONY: data
+data:
+	$(info Download zip file of datasets!)
 
 .PHONY: train
 train: test
@@ -72,7 +78,7 @@ ifeq (3,$(findstring 3,$(PYTHON_INTERPRETER)))
 	conda env remove --name $(PROJECT_NAME)
 	conda create --name $(PROJECT_NAME) python=3 -y
 else
-	conda create --name $(PROJECT_NAME) python=2.7
+	conda create --name $(PROJECT_NAME) python=2 -y
 endif
 		@echo ">>> New conda env created. Activate with:\nconda activate $(PROJECT_NAME)"
 else

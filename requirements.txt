@@ -4,6 +4,7 @@ blacken-docs
 boto3
 docformatter
 dvc[all]
+dvclive
 hydra-core
 hydra_colorlog
 ipywidgets
@@ -17,6 +18,7 @@ pre-commit
 pylint
 python-crontab
 pytorch-lightning
+PyYAML
 PyYAML
 reorder-python-imports
 tabulate

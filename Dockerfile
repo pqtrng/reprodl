@@ -18,4 +18,4 @@ COPY . ./
 
 # Run the training loop
 # CMD ["python", "train.py", "~trainer.gpus"]
-CMD ["python", "train.py"]
+# CMD ["python", "train.py"]

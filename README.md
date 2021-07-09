@@ -20,6 +20,20 @@ pip install -r requirements.txt
 
 - Extract zip file to **data** folder
 
+- If you want to use Docker then:
+
+- Build
+
+```bash
+docker build . -t reprodl --rm
+```
+
+- Run
+
+```bash
+docker run --name "reprodl" reprodl -it
+```
+
 - Train model
 
 ```bash
@@ -32,28 +46,14 @@ python train.py
 python train.py ~trainer.gpus
 ```
 
-- If you want to use Docker then:
-
-- For training with GPU, change this line in Dockerfile:
-
-```Docker
-CMD ["python", "train.py"]
-```
-
-- Without GPU
-
-```Docker
-CMD ["python", "train.py", "~trainer.gpus"]
-```
-
-- Build
+- Tune model
 
 ```bash
-docker build . -t reprodl --rm
+python tune.py
 ```
 
-- Run
+- Run jobs
 
 ```bash
-docker run --name "reprodl" reprodl
+python scheduler.py
 ```

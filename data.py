@@ -24,7 +24,8 @@ class ESC50Dataset(torch.utils.data.Dataset):
         self.db = torchaudio.transforms.AmplitudeToDB(top_db=80)
 
     def __getitem__(self, index):
-        """Return (xb, yb) pair, after applying all transformations on the audio file
+        """Return (xb, yb) pair, after applying all transformations on the
+        audio file.
 
         Args:
             index (int): index of pair
@@ -37,7 +38,7 @@ class ESC50Dataset(torch.utils.data.Dataset):
         return xb, label
 
     def __len__(self):
-        """Get total number of samples in dataset
+        """Get total number of samples in dataset.
 
         Returns:
             int: Number of samples

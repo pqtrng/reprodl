@@ -7,7 +7,7 @@ from torch.nn import functional as F
 
 
 class AudioNet(LightningModule):
-    """Neural network to classify audio files
+    """Neural network to classify audio files.
 
     Args:
         LightningModule (Object): Base class

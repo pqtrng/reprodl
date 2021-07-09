@@ -1,5 +1,8 @@
+autoflake
 black
+blacken-docs
 boto3
+docformatter
 dvc[all]
 hydra-core
 hydra_colorlog

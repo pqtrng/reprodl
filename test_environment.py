@@ -4,7 +4,7 @@ REQUIRED_PYTHON = "python3"
 
 
 def main():
-    """Testing environment
+    """Testing environment.
 
     Raises:
         ValueError  :   When can't recognized interpreter

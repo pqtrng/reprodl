@@ -6,7 +6,7 @@ from net import AudioNet
 
 
 def test_audio_net():
-    """Function to test AudioNet"""
+    """Function to test AudioNet."""
     with hydra.initialize(config_path="configs"):
         cfg = hydra.compose(
             config_name="default.yaml",

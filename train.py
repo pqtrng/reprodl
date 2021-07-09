@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 @hydra.main(config_path="configs", config_name="default")
 def train(cfg: DictConfig):
-    """Train AudioNet on ESC50 dataset
+    """Train AudioNet on ESC50 dataset.
 
     Args:
         cfg (DictConfig): Training cofiguration

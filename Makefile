@@ -35,7 +35,7 @@ data:
 .PHONY: lint
 lint:
 	$(info format codes)
-	pylint .
+	autoflake --in-place --remove-unused-variables --remove-all-unused-imports --remove-duplicate-keys *.py
 	black .
 
 .PHONY: precomit
@@ -54,6 +54,15 @@ clean: test
 	find . -type d -name "__pycache__" -delete
 	find . -type d -name "__MACOSX" -exec rm -rf {} +
 	find . -type f -name "*.zip" -delete
+
+.PHONY: train
+train: test
+	$(info Train model)
+
+.PHONY: crontab
+crontab: test
+	$(info Run scheduled jobs)
+	$(PYTHON_INTERPRETER) scheduler.py
 
 .PHONY: create_environment
 create_environment:

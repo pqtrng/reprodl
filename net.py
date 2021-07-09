@@ -1,12 +1,18 @@
+import torch
+from omegaconf import DictConfig
+from pytorch_lightning import LightningModule
+from pytorch_lightning.metrics import functional
 from torch import nn
 from torch.nn import functional as F
-from pytorch_lightning.metrics import functional
-from omegaconf import DictConfig
-import torch
-import pytorch_lightning as pl
 
 
-class AudioNet(pl.LightningModule):
+class AudioNet(LightningModule):
+    """Neural network to classify audio files.
+
+    Args:
+        LightningModule (Object): Base class
+    """
+
     def __init__(self, hparams: DictConfig):
         super().__init__()
         print(hparams)
@@ -68,25 +74,25 @@ class AudioNet(pl.LightningModule):
         return x
 
     def training_step(self, batch, batch_idx):
-        x, y = batch
-        y_hat = self(x)
-        loss = F.cross_entropy(y_hat, y)
+        features, target = batch
+        prediction = self(features)
+        loss = F.cross_entropy(input=prediction, target=target)
         self.log("train_loss", loss, on_step=True)
         return loss
 
     def validation_step(self, batch, batch_idx):
-        x, y = batch
+        features, target = batch
         y_hat = self(x)
         y_hat = torch.argmax(input=y_hat, dim=1)
-        acc = functional.accuracy(y_hat, y)
+        acc = functional.accuracy(preds=y_hat, target=target)
         self.log(name="val_acc", value=acc, on_epoch=True, prog_bar=True)
         return acc
 
     def test_step(self, batch, batch_idx):
-        x, y = batch
-        y_hat = self(x)
+        features, target = batch
+        y_hat = self(features)
         y_hat = torch.argmax(input=y_hat, dim=1)
-        acc = functional.accuracy(y_hat, y)
+        acc = functional.accuracy(preds=y_hat, target=target)
         self.log(name="test_acc", value=acc)
         return acc
 

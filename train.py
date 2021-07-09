@@ -1,4 +1,5 @@
 import logging
+import os
 from pathlib import Path
 
 import hydra
@@ -20,8 +21,11 @@ def train(cfg: DictConfig):
     """Train AudioNet on ESC50 dataset.
 
     Args:
-        cfg (DictConfig): Training cofiguration
+        cfg (DictConfig): Training configuration
     """
+    cfg.data.num_workers = os.cpu_count()
+    if not torch.cuda.is_available():
+        cfg.trainer.gpus = 0
 
     logger.info(OmegaConf.to_yaml(cfg=cfg))
 
@@ -30,18 +34,18 @@ def train(cfg: DictConfig):
     # Load data
     train_loader = torch.utils.data.DataLoader(
         dataset=ESC50Dataset(path=data_path, folds=cfg.data.train_folds),
-        num_workers=cfg.data.workers,
+        num_workers=cfg.data.num_workers,
         batch_size=cfg.data.batch_size,
         shuffle=True,
     )
     val_loader = torch.utils.data.DataLoader(
         dataset=ESC50Dataset(path=data_path, folds=cfg.data.val_folds),
-        num_workers=cfg.data.workers,
+        num_workers=cfg.data.num_workers,
         batch_size=cfg.data.batch_size,
     )
     test_loader = torch.utils.data.DataLoader(
         dataset=ESC50Dataset(path=data_path, folds=cfg.data.test_folds),
-        num_workers=cfg.data.workers,
+        num_workers=cfg.data.num_workers,
         batch_size=cfg.data.batch_size,
     )
 
@@ -51,11 +55,22 @@ def train(cfg: DictConfig):
 
     audio_net = AudioNet(hparams=cfg.model)
 
-    trainer = pl.Trainer(**cfg.trainer, logger=pl.loggers.WandbLogger())
+    trainer = pl.Trainer(
+        gpus=cfg.trainer.gpus,
+        max_epochs=cfg.trainer.max_epochs,
+        logger=pl.loggers.WandbLogger(),
+    )
 
     trainer.fit(
         model=audio_net, train_dataloader=train_loader, val_dataloaders=val_loader
     )
+
+    # summary dvc
+    accuracy = trainer.logged_metrics["train_loss"].data.cpu().numpy().reshape(1)[0]
+
+    summary_data = {"stages": {"train": {"accuracy": accuracy}}}
+    with open("summary.json", "w") as current_file:
+        current_file.write(str(summary_data))
 
 
 if __name__ == "__main__":

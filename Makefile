@@ -71,6 +71,14 @@ crontab: test
 	$(info Run scheduled jobs)
 	$(PYTHON_INTERPRETER) scheduler.py
 
+.PHONY: docker
+docker: clean
+	$(info Run in Docker)
+	docker build . -t reprodl --rm
+	docker stop reprodl || true && docker rm reprodl || true
+	docker run -it --name "reprodl" reprodl
+
+
 .PHONY: create_environment
 create_environment:
 ifeq (True,$(HAS_CONDA))

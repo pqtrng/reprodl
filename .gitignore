@@ -130,3 +130,4 @@ data/ESC-50/*
 wandb/*
 .dvc/cache/*
 .dvc/tmp/*
+experiments-data/*

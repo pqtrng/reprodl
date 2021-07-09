@@ -40,12 +40,6 @@ wandb local
 python train.py
 ```
 
-- Without GPU
-
-```bash
-python train.py ~trainer.gpus
-```
-
 - Tune model
 
 ```bash
@@ -69,5 +63,6 @@ docker build . -t reprodl --rm
 - Run
 
 ```bash
-docker run --name "reprodl" reprodl -it
+docker stop reprodl || true && docker rm reprodl || true
+docker run -it --name "reprodl" reprodl
 ```

@@ -27,9 +27,9 @@ data:
     train_folds: [1, 2, 3]
     val_folds: [4]
     test_folds: [5]
-    workers: 20
     batch_size: 8
     retrieval_size: 50
+    num_workers: 20
 
 model:
   # All parameters related to the model

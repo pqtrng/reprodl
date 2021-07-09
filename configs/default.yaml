@@ -1,5 +1,24 @@
 seed : 45
 
+cron:
+  username: "casey" # The machine user name that will run the cron jobs
+  python_path: "~/anaconda3/envs/reprodl/bin/python" # Specify the path to Python;
+  clean: True # If True, the cronjobs in the crontab will be removed
+  stop: False # If True, the new cronjobs will not be added to the crontab;
+  py_cmds: # the list of python files to run, with the frequency at which they will be executed
+    scheduler:
+      minute:
+        every: 60
+    retrieve_data:
+      minute:
+        every: 10
+    train:
+      hour:
+        every: 2
+      dow:
+        "on": "MON"
+
+
 data:
   # All parameters related to the dataset
   path : 'data/ESC-50'

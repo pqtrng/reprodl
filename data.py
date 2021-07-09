@@ -12,7 +12,8 @@ class ESC50Dataset(torch.utils.data.Dataset):
         super().__init__()
         # Load csv
         self.path = path
-        self.csv = pd.read_csv(path / Path("meta/esc50.csv"))
+        # self.csv = pd.read_csv(path / Path("meta/esc50.csv"))
+        self.csv = pd.read_csv(path / Path("meta/extra_esc50.csv"))
         self.csv = self.csv[self.csv["fold"].isin(folds)]
 
         # Transform

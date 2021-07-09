@@ -82,7 +82,7 @@ class AudioNet(LightningModule):
 
     def validation_step(self, batch, batch_idx):
         features, target = batch
-        y_hat = self(x)
+        y_hat = self(features)
         y_hat = torch.argmax(input=y_hat, dim=1)
         acc = functional.accuracy(preds=y_hat, target=target)
         self.log(name="val_acc", value=acc, on_epoch=True, prog_bar=True)

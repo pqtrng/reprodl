@@ -22,6 +22,19 @@ def train(cfg: DictConfig):
     Args:
         cfg (DictConfig): Training cofiguration
     """
+    config = {
+        "sample_rate": cfg.data.sample_rate,
+        "batch_size": cfg.data.batch_size,
+        "lr": cfg.model.optimizer.lr,
+        "base_filters": cfg.model.base_filters,
+    }
+
+    wandb.init(project="reprodl", config=config)
+
+    cfg.data.sample_rate = wandb.config.sample_rate
+    cfg.data.batch_size = wandb.config.batch_size
+    cfg.model.optimizer.lr = wandb.config.lr
+    cfg.model.base_filters = wandb.config.base_filters
 
     logger.info(OmegaConf.to_yaml(cfg=cfg))
 
@@ -46,8 +59,6 @@ def train(cfg: DictConfig):
     )
 
     pl.seed_everything(cfg.seed)
-
-    wandb.init(project="reprodl")
 
     audio_net = AudioNet(hparams=cfg.model)
 

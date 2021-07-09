@@ -29,7 +29,7 @@ requirements: test_environment
 	$(PYTHON_INTERPRETER) -m pip install -r requirements.txt --upgrade
 
 .PHONY: lint
-lint: requirements
+lint:
 	$(info format codes)
 	autoflake --in-place --remove-unused-variables --remove-all-unused-imports --remove-duplicate-keys *.py
 	black .
@@ -64,6 +64,7 @@ data:
 .PHONY: train
 train: test
 	$(info Train model)
+	$(PYTHON_INTERPRETER) train.py
 
 .PHONY: crontab
 crontab: test
@@ -93,7 +94,7 @@ endif
 .PHONY: test_environment
 test_environment:
 	$(info Check python version!)
-	$(PYTHON_INTERPRETER) test_environment.py
+	$(PYTHON_INTERPRETER) environment_test.py
 
 #################################################################################
 # Self Documenting Commands                                                     #

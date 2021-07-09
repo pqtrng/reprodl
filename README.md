@@ -20,19 +20,19 @@ pip install -r requirements.txt
 
 - Extract zip file to **data** folder
 
-- If you want to use Docker then:
+- Pull **Weights and Biases** image
 
-- Build
-
-```bash
-docker build . -t reprodl --rm
+```Docker
+docker pull wandb/local
 ```
 
-- Run
+- Start **Weights and Biases** server
 
 ```bash
-docker run --name "reprodl" reprodl -it
+wandb local
 ```
+
+- Finish validation step, and open [http://localhost:8080](http://localhost:8080) in your browser.
 
 - Train model
 
@@ -56,4 +56,18 @@ python tune.py
 
 ```bash
 python scheduler.py
+```
+
+- If you want to use **Docker** then:
+
+- Build
+
+```bash
+docker build . -t reprodl --rm
+```
+
+- Run
+
+```bash
+docker run --name "reprodl" reprodl -it
 ```

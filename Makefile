@@ -29,27 +29,32 @@ requirements: test_environment
 	$(PYTHON_INTERPRETER) -m pip install -r requirements.txt --upgrade
 
 .PHONY: lint
+## Format python script
 lint:
 	$(info format codes)
 	autoflake --in-place --remove-unused-variables --remove-all-unused-imports --remove-duplicate-keys *.py
 	black .
 
 .PHONY: githook
+## Prepare pre commit hooks
 githook: lint
 	$(info Set up pre commit hook)
 	rm .git/hooks/*
 	pre-commit install
 
-.PHONY: precomit
+.PHONY: check
+## Check all files before commit
 check: githook
 	pre-commit run --all-files
 
 .PHONY: test
+## Test code
 test: check
 	$(info Testing)
 	nosetests
 
 .PHONY: clean
+## Clean up binary files and etc
 clean: test
 	$(info Clean project)
 	find . -type f -name "*.pyc" -delete
@@ -58,20 +63,24 @@ clean: test
 	find . -type f -name "*.zip" -delete
 
 .PHONY: data
+## Download and process data
 data:
 	$(info Download zip file of datasets!)
 
 .PHONY: train
+## Train model
 train: test
 	$(info Train model)
 	$(PYTHON_INTERPRETER) train.py
 
 .PHONY: crontab
+## Schedule cron jobs
 crontab: test
 	$(info Run scheduled jobs)
 	$(PYTHON_INTERPRETER) scheduler.py
 
 .PHONY: docker
+## Running in a Docker container
 docker: clean
 	$(info Run in Docker)
 	docker build . -t reprodl --rm
@@ -80,6 +89,7 @@ docker: clean
 
 
 .PHONY: create_environment
+## Create an isolated environment
 create_environment:
 ifeq (True,$(HAS_CONDA))
 		@echo ">>> Detected conda, creating conda environment."
@@ -100,6 +110,7 @@ endif
 
 
 .PHONY: test_environment
+## Test if the environment exists or not
 test_environment:
 	$(info Check python version!)
 	$(PYTHON_INTERPRETER) environment_test.py

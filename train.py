@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 from pathlib import Path
@@ -68,9 +69,11 @@ def train(cfg: DictConfig):
     # summary dvc
     accuracy = trainer.logged_metrics["train_loss"].data.cpu().numpy().reshape(1)[0]
 
-    summary_data = {"stages": {"train": {"accuracy": accuracy}}}
+    summary_data = {"stages": {"train": {"accuracy": accuracy.astype(float)}}}
     with open("summary.json", "w") as current_file:
-        current_file.write(str(summary_data))
+        json.dump(
+            summary_data, current_file, ensure_ascii=True, indent=4, sort_keys=True
+        )
 
 
 if __name__ == "__main__":

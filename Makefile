@@ -1,5 +1,3 @@
-.PHONY: clean data lint requirements train test view all
-
 #################################################################################
 # GLOBALS                                                                       #
 #################################################################################
@@ -21,43 +19,93 @@ endif
 # COMMANDS                                                                      #
 #################################################################################
 
-
+.PHONY: requirements
 ## Install Python Dependencies
 requirements: test_environment
 	$(info Install supporting library!)
 	$(PYTHON_INTERPRETER) -m pip install -U pip setuptools wheel
-	$(PYTHON_INTERPRETER) -m pip install -r requirements.txt #--upgrade
+	$(PYTHON_INTERPRETER) -m pip install -r requirements.txt --upgrade
 
+.PHONY: lint
+## Format python script
+lint:
+	$(info format codes)
+	autoflake --in-place --remove-unused-variables --remove-all-unused-imports --remove-duplicate-keys *.py
+	black .
 
-data: clean
-	$(info Download zip file of datasets!)
-	# $(PYTHON_INTERPRETER) src/data/download.py $(DATA_URL) data/interim/original.zip
+.PHONY: githook
+## Prepare pre commit hooks
+githook: lint
+	$(info Set up pre commit hook)
+	rm .git/hooks/*
+	pre-commit install
 
+.PHONY: check
+## Check all files before commit
+check: githook
+	pre-commit run --all-files
 
-## Delete all compiled Python files
-clean: lint
+.PHONY: test
+## Test code
+test: check
+	$(info Testing)
+	nosetests
+
+.PHONY: clean
+## Clean up binary files and etc
+clean: test
 	$(info Clean project)
 	find . -type f -name "*.pyc" -delete
 	find . -type d -name "__pycache__" -delete
 	find . -type d -name "__MACOSX" -exec rm -rf {} +
 	find . -type f -name "*.zip" -delete
 
+.PHONY: data
+## Download and process data
+data:
+	$(info Download zip file of datasets!)
 
-## Lint using black 
-lint:
-	$(info format codes)
-	black src
+.PHONY: dvc
+dvc: test
+	mkdir experiments-data
+
+.PHONY: wandb
+wandb: dvc
+	docker pull wandb/local
+	docker stop wandb-local || true
+	wandb local
+
+.PHONY: train
+## Train model
+train: wandb
+	$(info Train model)
+	$(PYTHON_INTERPRETER) train.py
+
+.PHONY: crontab
+## Schedule cron jobs
+crontab: test
+	$(info Run scheduled jobs)
+	$(PYTHON_INTERPRETER) scheduler.py
+
+.PHONY: docker
+## Running in a Docker container
+docker: clean
+	$(info Run in Docker)
+	docker build . -t reprodl --rm
+	docker stop reprodl || true && docker rm reprodl || true
+	docker run -it --name "reprodl" reprodl
 
 
-## Set up python interpreter environment
+.PHONY: create_environment
+## Create an isolated environment
 create_environment:
 ifeq (True,$(HAS_CONDA))
 		@echo ">>> Detected conda, creating conda environment."
 ifeq (3,$(findstring 3,$(PYTHON_INTERPRETER)))
 	conda env remove --name $(PROJECT_NAME)
-	conda create --name $(PROJECT_NAME) python=3.8 -y
+	conda create --name $(PROJECT_NAME) python=3 -y
 else
-	conda create --name $(PROJECT_NAME) python=2.7
+	conda create --name $(PROJECT_NAME) python=2 -y
 endif
 		@echo ">>> New conda env created. Activate with:\nconda activate $(PROJECT_NAME)"
 else
@@ -69,10 +117,11 @@ else
 endif
 
 
-## Test python environment is setup correctly
+.PHONY: test_environment
+## Test if the environment exists or not
 test_environment:
 	$(info Check python version!)
-	$(PYTHON_INTERPRETER) test_environment.py
+	$(PYTHON_INTERPRETER) environment_test.py
 
 #################################################################################
 # Self Documenting Commands                                                     #

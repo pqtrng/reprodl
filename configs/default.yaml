@@ -1,28 +1,49 @@
-seed : 45
+---
+seed: 45
+
+cron:
+    username: "username" # The machine user name that will run the cron jobs
+    python_path: "~/anaconda3/envs/reprodl/bin/python" # Specify the path to Python;
+    clean: 1 # If True, the cronjobs in the crontab will be removed
+    stop: 0 # If True, the new cronjobs will not be added to the crontab;
+    py_cmds: # the list of python files to run, with the frequency at which they will be executed
+        scheduler:
+            minute:
+                every: 60
+        retrieve_data:
+            minute:
+                every: 10
+        train:
+            hour:
+                every: 2
+            dow:
+                "on": "MON"
+
 
 data:
   # All parameters related to the dataset
-  path : 'data/ESC-50'
-  sample_rate : 8000
-  train_folds : [1,2,3]
-  val_folds : [4]
-  test_folds : [5]
-  workers : 20
-  batch_size : 8
+    path: "data/ESC-50"
+    sample_rate: 8000
+    train_folds: [1, 2, 3]
+    val_folds: [4]
+    test_folds: [5]
+    batch_size: 8
+    retrieval_size: 50
+    num_workers: 20
 
 model:
   # All parameters related to the model
-  num_classes : 50
-  base_filters : 32
-  optimizer:
+    num_classes: 50
+    base_filters: 32
+    optimizer:
       # Subset of parameters related to the optimizer
-      lr : 3e-4
+        lr: 3e-4
 
 trainer:
   # All parameters to be passed at the Trainer object
-  gpus : 1
-  max_epochs : 25
+    gpus: 1
+    max_epochs: 25
 
 defaults:
-  - override hydra/job_logging: colorlog
-  - override hydra/hydra_logging: colorlog
+    - override hydra/job_logging: colorlog
+    - override hydra/hydra_logging: colorlog

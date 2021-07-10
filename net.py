@@ -1,9 +1,11 @@
 import torch
+import torchmetrics
 from omegaconf import DictConfig
 from pytorch_lightning import LightningModule
-from pytorch_lightning.metrics import functional
 from torch import nn
 from torch.nn import functional as F
+
+import dvclive
 
 
 class AudioNet(LightningModule):
@@ -15,7 +17,7 @@ class AudioNet(LightningModule):
 
     def __init__(self, hparams: DictConfig):
         super().__init__()
-        print(hparams)
+        self.metric = torchmetrics.Accuracy()
         self.save_hyperparameters(hparams)
         self.conv1 = nn.Conv2d(
             in_channels=1,
@@ -78,22 +80,40 @@ class AudioNet(LightningModule):
         prediction = self(features)
         loss = F.cross_entropy(input=prediction, target=target)
         self.log("train_loss", loss, on_step=True)
+
+        # logging metric
+        train_loss = loss.data.cpu().numpy().reshape(1)[0].item()
+        dvclive.log(name="train_loss", val=train_loss)
+        dvclive.next_step()
+
         return loss
 
     def validation_step(self, batch, batch_idx):
         features, target = batch
-        y_hat = self(x)
+        y_hat = self(features)
         y_hat = torch.argmax(input=y_hat, dim=1)
-        acc = functional.accuracy(preds=y_hat, target=target)
+        acc = self.metric(preds=y_hat, target=target)
         self.log(name="val_acc", value=acc, on_epoch=True, prog_bar=True)
+
+        # logging metric
+        val_acc = acc.cpu().numpy().reshape(1)[0].item()
+        dvclive.log(name="val_acc", val=val_acc)
+        dvclive.next_step()
+
         return acc
 
     def test_step(self, batch, batch_idx):
         features, target = batch
         y_hat = self(features)
         y_hat = torch.argmax(input=y_hat, dim=1)
-        acc = functional.accuracy(preds=y_hat, target=target)
+        acc = self.metric(preds=y_hat, target=target)
         self.log(name="test_acc", value=acc)
+
+        # logging metric
+        test_acc = acc.cpu().numpy().reshape(1)[0].item()
+        dvclive.log(name="test_acc", val=test_acc)
+        dvclive.next_step()
+
         return acc
 
     def configure_optimizers(self):

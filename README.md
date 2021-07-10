@@ -20,31 +20,39 @@ pip install -r requirements.txt
 
 - Extract zip file to **data** folder
 
+- Pull **Weights and Biases** image
+
+```Docker
+docker pull wandb/local
+```
+
+- Start **Weights and Biases** server
+
+```bash
+wandb local
+```
+
+- Finish validation step, and open [http://localhost:8080](http://localhost:8080) in your browser.
+
 - Train model
 
 ```bash
 python train.py
 ```
 
-- Without GPU
+- Tune model
 
 ```bash
-python train.py ~trainer.gpus
+python tune.py
 ```
 
-- If you want to use Docker then:
+- Run jobs
 
-- For training with GPU, change this line in Dockerfile:
-
-```Docker
-CMD ["python", "train.py"]
+```bash
+python scheduler.py
 ```
 
-- Without GPU
-
-```Docker
-CMD ["python", "train.py", "~trainer.gpus"]
-```
+- If you want to use **Docker** then:
 
 - Build
 
@@ -55,5 +63,6 @@ docker build . -t reprodl --rm
 - Run
 
 ```bash
-docker run --name "reprodl" reprodl
+docker stop reprodl || true && docker rm reprodl || true
+docker run -it --name "reprodl" reprodl
 ```

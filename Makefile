@@ -79,7 +79,7 @@ wandb: dvc
 ## Train model
 train: wandb
 	$(info Train model)
-	dvc run -n train -d train.py python train.py
+	$(PYTHON_INTERPRETER) train.py
 
 .PHONY: crontab
 ## Schedule cron jobs

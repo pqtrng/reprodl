@@ -21,11 +21,6 @@ pip install -r requirements.txt
 - Extract zip file to **data** folder
 - Run wandb
 
-```bash
-docker pull wandb/local
-wandb local
-```
-
 - Pull **Weights and Biases** image
 
 ```Docker

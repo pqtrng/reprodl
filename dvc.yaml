@@ -1,0 +1,11 @@
+---
+stages:
+    prepare:
+        cmd: python prepare.py data/
+        deps:
+            - data/
+            - prepare.py
+    train:
+        cmd: python train.py
+        deps:
+            - train.py

@@ -27,6 +27,7 @@ def train(cfg: DictConfig):
     cfg.data.num_workers = os.cpu_count()
     if not torch.cuda.is_available():
         cfg.trainer.gpus = 0
+        cfg.trainer.max_epochs = 2
 
     logger.info(OmegaConf.to_yaml(cfg=cfg))
 
@@ -66,10 +67,25 @@ def train(cfg: DictConfig):
         model=audio_net, train_dataloader=train_loader, val_dataloaders=val_loader
     )
 
-    # summary dvc
-    accuracy = trainer.logged_metrics["train_loss"].data.cpu().numpy().reshape(1)[0]
+    torch.save(trainer.model.state_dict(), "model.pth")
 
-    summary_data = {"stages": {"train": {"accuracy": accuracy.astype(float)}}}
+    trainer.test(model=audio_net, test_dataloaders=test_loader)
+
+    # summary dvc
+    train_loss = trainer.logged_metrics["train_loss"].data.cpu().numpy().reshape(1)[0]
+    valid_accuracy = trainer.logged_metrics["val_acc"].data.cpu().numpy().reshape(1)[0]
+    test_accuracy = trainer.logged_metrics["test_acc"].data.cpu().numpy().reshape(1)[0]
+
+    summary_data = {
+        "stages": {
+            "train": {
+                "train_loss": train_loss.astype(float),
+                "valid_accuracy": valid_accuracy.astype(float),
+                "test_accuracy": test_accuracy.astype(float),
+            }
+        }
+    }
+
     with open("summary.json", "w") as current_file:
         json.dump(
             summary_data, current_file, ensure_ascii=True, indent=4, sort_keys=True

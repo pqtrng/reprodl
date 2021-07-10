@@ -19,8 +19,6 @@ endif
 # COMMANDS                                                                      #
 #################################################################################
 
-
-
 .PHONY: requirements
 ## Install Python Dependencies
 requirements: test_environment
@@ -67,11 +65,21 @@ clean: test
 data:
 	$(info Download zip file of datasets!)
 
+.PHONY: dvc
+dvc: test
+	mkdir experiments-data
+
+.PHONY: wandb
+wandb: dvc
+	docker pull wandb/local
+	docker stop wandb-local || true
+	wandb local
+
 .PHONY: train
 ## Train model
-train: test
+train: wandb
 	$(info Train model)
-	$(PYTHON_INTERPRETER) train.py
+	dvc run -n train -d train.py python train.py
 
 .PHONY: crontab
 ## Schedule cron jobs

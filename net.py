@@ -5,6 +5,8 @@ from pytorch_lightning import LightningModule
 from torch import nn
 from torch.nn import functional as F
 
+import dvclive
+
 
 class AudioNet(LightningModule):
     """Neural network to classify audio files.
@@ -78,6 +80,12 @@ class AudioNet(LightningModule):
         prediction = self(features)
         loss = F.cross_entropy(input=prediction, target=target)
         self.log("train_loss", loss, on_step=True)
+
+        # logging metric
+        train_loss = loss.data.cpu().numpy().reshape(1)[0].item()
+        dvclive.log(name="train_loss", val=train_loss)
+        dvclive.next_step()
+
         return loss
 
     def validation_step(self, batch, batch_idx):
@@ -86,6 +94,12 @@ class AudioNet(LightningModule):
         y_hat = torch.argmax(input=y_hat, dim=1)
         acc = self.metric(preds=y_hat, target=target)
         self.log(name="val_acc", value=acc, on_epoch=True, prog_bar=True)
+
+        # logging metric
+        val_acc = acc.cpu().numpy().reshape(1)[0].item()
+        dvclive.log(name="val_acc", val=val_acc)
+        dvclive.next_step()
+
         return acc
 
     def test_step(self, batch, batch_idx):
@@ -94,6 +108,12 @@ class AudioNet(LightningModule):
         y_hat = torch.argmax(input=y_hat, dim=1)
         acc = self.metric(preds=y_hat, target=target)
         self.log(name="test_acc", value=acc)
+
+        # logging metric
+        test_acc = acc.cpu().numpy().reshape(1)[0].item()
+        dvclive.log(name="test_acc", val=test_acc)
+        dvclive.next_step()
+
         return acc
 
     def configure_optimizers(self):

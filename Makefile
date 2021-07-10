@@ -65,12 +65,8 @@ clean: test
 data:
 	$(info Download zip file of datasets!)
 
-.PHONY: dvc
-dvc: test
-	mkdir experiments-data
-
 .PHONY: wandb
-wandb: dvc
+wandb: test
 	docker pull wandb/local
 	docker stop wandb-local || true
 	wandb local
@@ -79,7 +75,8 @@ wandb: dvc
 ## Train model
 train: wandb
 	$(info Train model)
-	dvc run -n train -d train.py python train.py
+	# dvc run -f -n train -d train.py python train.py
+	$(PYTHON_INTERPRETER) train.py
 
 .PHONY: crontab
 ## Schedule cron jobs
@@ -94,6 +91,24 @@ docker: clean
 	docker build . -t reprodl --rm
 	docker stop reprodl || true && docker rm reprodl || true
 	docker run -it --name "reprodl" reprodl
+
+.PHONY: archive
+## Archive model
+archive: clean
+	mkdir -p serve/model_store
+	torch-model-archiver --model-name AUDIONET --version 1.0 --serialized-file ./serve/model.pth --model-file ./serve/model.py --handler ./serve/handler.py --export-path ./serve/model_store -f --extra-files ./configs/default.yaml,./serve/index_to_name.json
+
+.PHONY: serve
+## Serve model
+serve: archive
+	torchserve --start --model-store ./serve/model_store --models audionet=AUDIONET.mar --no-config-snapshots
+
+.PHONY: deploy
+## Deploy model
+deploy: serve
+	curl -X POST http://127.0.0.1:8080/predictions/audionet -T ./serve/test_data/1-14262-A-37.wav
+
+
 
 
 .PHONY: create_environment

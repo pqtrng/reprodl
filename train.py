@@ -28,6 +28,8 @@ def train(cfg: DictConfig):
     if not torch.cuda.is_available():
         cfg.trainer.gpus = 0
         cfg.trainer.max_epochs = 2
+    else:
+        cfg.trainer.max_epochs = 100
 
     logger.info(OmegaConf.to_yaml(cfg=cfg))
 
